@@ -10,14 +10,19 @@ namespace StructConlsole
         protected float AvgPoints; // – бал атестату
         protected ZNO[] ZNOResults; // – масив об’єктiв типу ZNO;
 
-        public Entrant(string Name = "", double IdNum = 0, float CoursePoints = 0, float AvgPoints = 0)
+        public Entrant(string Name = "1", double IdNum = 0, float CoursePoints = 0, float AvgPoints = 0)
         {
             this.Name = Name;
             this.IdNum = IdNum;
             this.CoursePoints = CoursePoints;
             this.AvgPoints = AvgPoints;
             this.ZNOResults = new ZNO[3];
+            for(int i = 0; i < 3; i++)
+            {
+                ZNOResults[i] = new ZNO();
+            }
         }
+
 
         public Entrant(Entrant Copy)
         {
@@ -94,36 +99,64 @@ namespace StructConlsole
             PrintEntrants(info);
         }
 
-        static Entrant[] ReadEntrantsArray() // читає з клавiатури данi i повертає масив об’єктiв типу Entrant(n штук)
+        static Entrant[] ReadEntrantsArray()
         {
-            Console.Write("|+|Введiть кiлькiсть абiтурiєнтiв -> ");
-            int size = Convert.ToInt32(Console.ReadLine());
-            Entrant[] temp_arr = new Entrant[size];
+            Console.Write("Введите количество абитуриентов: ");
+            int size;
+            while (!int.TryParse(Console.ReadLine(), out size))
+            { Console.WriteLine("|+|Невiрно набраний символ!|+|"); }
+            Entrant[] grad = new Entrant[size];
+            ZNO[] temp = new ZNO[3];
+            for (int i = 0; i < 3; i++) { temp[i] = new ZNO(); }
+            double wra;
 
             for (int i = 0; i < size; i++)
             {
-                temp_arr[i] = new Entrant();
-                ZNO[] temp = new ZNO[3];
-                Console.Write("|+|Абiтурiєнт #" + (i + 1) + "\n|+|Ввести П.I.Б -> "); temp_arr[i].SetName(Console.ReadLine());
-                Console.Write("|+|Ввести iдентифiкацiйний код абiтурiєнта -> "); temp_arr[i].SetIdNum(Convert.ToDouble(Console.ReadLine()));
-                Console.Write("|+|Ввести бал за пiдготовчi курси -> "); temp_arr[i].SetIdNum(Convert.ToSingle(Console.ReadLine()));
-                Console.Write("|+|Ввести бал aтестату - > "); temp_arr[i].SetIdNum(Convert.ToSingle(Console.ReadLine()));
-                for (i = 0; i < 3; i++)
+                grad[i] = new Entrant();
+
+                Console.Write("|+|Абiтурiєнт #" + (i + 1) + "\n|+|Ввести П.I.Б -> ");
+                grad[i].SetName(Console.ReadLine());
+
+                Console.Write("|+|Ввести iдентифiкацiйний код абiтурiєнта -> ");
+                while (!Double.TryParse(Console.ReadLine(), out wra))
+                { Console.WriteLine("|+|Невiрно набраний символ!|+|"); }
+                grad[i].SetIdNum(wra);
+
+                Console.Write("|+|Ввести бал за пiдготовчi курси -> ");
+                while (!Double.TryParse(Console.ReadLine(), out wra))
+                { Console.WriteLine("|+|Невiрно набраний символ!|+|"); }
+                grad[i].SetCoursePoints(Convert.ToSingle(wra));
+
+                Console.Write("|+|Ввести бал aтестату - > ");
+                while (!Double.TryParse(Console.ReadLine(), out wra))
+                { Console.WriteLine("|+|Невiрно набраний символ!|+|"); }
+                grad[i].SetAvgPoints(Convert.ToSingle(wra));
+
+                for (int j = 0; j < 3; j++)
                 {
                     string on;
-                    switch (i)
+                    switch (j)
                     {
                         case 0: on = "1-ого"; break;
                         case 1: on = "2-ого"; break;
                         case 2: on = "3-ого"; break;
                         default: on = "|+|Невiрно набраний символ!|+|"; break;
                     }
-                    Console.Write("|+|Назва " + on + " предмету -> "); temp[i].SetSubject(Console.ReadLine());
-                    Console.Write("|+|Ввести результат ЗНО по предмету -> "); temp[i].SetPoints(Convert.ToSingle(Console.ReadLine()));
+
+                    Console.Write("|+|Назва " + on + " предмету -> ");
+                    temp[j].SetSubject(Console.ReadLine());
+
+                    Console.Write("|+|Ввести результат ЗНО по предмету -> ");
+                    while (!Double.TryParse(Console.ReadLine(), out wra))
+                    { Console.WriteLine("|+|Невiрно набраний символ!|+|"); }
+                    temp[j].SetPoints(Convert.ToSingle(wra));
+                    grad[i].SetZNOResults(temp);
                 }
-                temp_arr[i].SetZNOResults(temp); Console.WriteLine();
+
+                Console.WriteLine();
             }
-            return temp_arr;
+
+            return grad;
         }
 
         static void PrintEntrant(Entrant obj) // – приймає об’єкт типу Entrant i виводить його на екран
